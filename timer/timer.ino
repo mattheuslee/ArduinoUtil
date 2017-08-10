@@ -1,9 +1,13 @@
 #include "Timer.hpp"
 
+Timer timer(1.5_s);
+
 void setup() {
-    Timer timer(50_ms);
+    timer.reset();
 }
 
 void loop() {
-
+    if (timer.has_elapsed()) {
+        int i = 0;
+    }
 }
