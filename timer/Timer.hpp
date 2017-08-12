@@ -94,12 +94,52 @@ public:
         return currTime - lastTime_;
     }
 
-private:
+protected:
     Timer() : lastTime_(millis()), lastInterval_(0) {}
 
     time_t lastTime_;
     interval_t interval_;
     interval_t lastInterval_;
+
+};
+
+typedef void(*Callback)();
+class CallbackTimer {
+
+public:
+    using interval_t = Timer::interval_t;
+    using time_t = Timer::time_t;
+
+    CallbackTimer(Duration const & duration, Callback const & callback)
+            : CallbackTimer() {
+        interval_ = duration.val;
+        callback_ = callback;
+    }
+
+    CallbackTimer(Rate const & rate, Callback const & callback)
+            : CallbackTimer() {
+        interval_ = 1000 / rate.val;
+        callback_ = callback;
+    }
+
+    void reset() {
+        lastTime_ = millis();
+    }
+
+    void update() {
+        time_t currTime = millis();
+        if ((currTime - lastTime_) >= interval_) {
+            lastTime_ = currTime;
+            callback_();
+        }
+    }
+
+protected:
+    CallbackTimer() : lastTime_(millis()) {}
+
+    time_t lastTime_;
+    interval_t interval_;
+    Callback callback_;
 
 };
 
